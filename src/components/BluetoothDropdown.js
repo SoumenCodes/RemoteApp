@@ -1,32 +1,41 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
-import { Menu, Button } from 'react-native-paper';
+import { View, FlatList } from 'react-native';
+import { Button, Modal, Portal, List } from 'react-native-paper';
 
 export default function BluetoothDropdown({ devices, onConnect }) {
     const [visible, setVisible] = useState(false);
 
     return (
-        <View style={{ marginVertical: 16 }}>
-            <Menu
-                visible={visible}
-                onDismiss={() => setVisible(false)}
-                anchor={
-                    <Button mode="outlined" onPress={() => setVisible(true)}>
-                        Select Paired Device
-                    </Button>
-                }
-            >
-                {devices?.map(device => (
-                    <Menu.Item
-                        key={device.id}
-                        onPress={() => {
-                            setVisible(false);
-                            onConnect(device);
-                        }}
-                        title={device.name || device.id}
+        <>
+            <Button mode="outlined" onPress={() => setVisible(true)}>
+                Select Paired Device
+            </Button>
+
+            <Portal>
+                <Modal
+                    visible={visible}
+                    onDismiss={() => setVisible(false)}
+                    contentContainerStyle={{
+                        backgroundColor: 'white',
+                        margin: 20,
+                        borderRadius: 8,
+                    }}
+                >
+                    <FlatList
+                        data={devices}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => (
+                            <List.Item
+                                title={item.name || item.id}
+                                onPress={() => {
+                                    setVisible(false);
+                                    setTimeout(() => onConnect(item), 300);
+                                }}
+                            />
+                        )}
                     />
-                ))}
-            </Menu>
-        </View>
+                </Modal>
+            </Portal>
+        </>
     );
 }
