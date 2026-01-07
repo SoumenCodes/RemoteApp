@@ -28,15 +28,20 @@ export const connectToDevice = async (deviceId) => {
 };
 
 export const sendCommand = async (command) => {
-    if (!connectedDevice) return;
+    if (!connectedDevice) {
+        console.log('❌ No device connected');
+        return;
+    }
 
     try {
-        // ✅ THIS IS THE ONLY VALID WAY
+        console.log('📤 Sending:', command);
         await connectedDevice.write(`${command}\n`);
+        console.log('✅ Sent:', command);
     } catch (e) {
-        console.log('Send failed', e);
+        console.log('❌ Send failed', e);
     }
 };
+
 
 export const disconnect = async () => {
     if (!connectedDevice) return;
